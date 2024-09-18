@@ -1,112 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Utopia_3
+interface IBirthable
 {
-    public interface IBuyer
-    {
-        int Food { get; set; }
-        void BuyFood();
-    }
-    public class Citizen : IBirthable, IBuyer
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public string Id { get; set; }
-        public string Birthdate { get; set; }
-        public int Food { get; set; }
+    string BirthDate { get; }
+}
 
-        public Citizen(string name, int age, string id, string birthdate)
-        {
-            Name = name;
-            Age = age;
-            Id = id;
-            Birthdate = birthdate;
-            Food = 0;
-        }
+interface IBuyer
+{
+    int Food { get; }
+    void BuyFood();
+}
 
-        public void BuyFood()
-        {
-            Food += 10;
-        }
-    }
-    public class Rebel : IBuyer
+class Citizen : IBirthable, IBuyer
+{
+    public string Name { get; }
+    public int Age { get; }
+    public string Id { get; }
+    public string BirthDate { get; }
+    public int Food { get; private set; }
+
+    public Citizen(string name, int age, string id, string birthDate)
     {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public string Group { get; set; }
-        public int Food { get; set; }
-
-        public Rebel(string name, int age, string group)
-        {
-            Name = name;
-            Age = age;
-            Group = group;
-            Food = 0;
-        }
-
-        public void BuyFood()
-        {
-            Food += 5;
-        }
-    }
-    public class Pet : IBirthable
-    {
-        public string Name { get; set; }
-        public string Birthdate { get; set; }
-
-        public Pet(string name, string birthdate)
-        {
-            Name = name;
-            Birthdate = birthdate;
-        }
-    }
-    public interface IBirthable
-    {
-        string Birthdate { get; }
+        Name = name;
+        Age = age;
+        Id = id;
+        BirthDate = birthDate;
+        Food = 0;
     }
 
-    class Program
+    public void BuyFood()
     {
-        static void Main()
-        {
-            Dictionary<string, IBuyer> buyers = new Dictionary<string, IBuyer>();
-            int n = int.Parse(Console.ReadLine());
+        Food += 10;
+    }
+}
 
-            for (int i = 0; i < n; i++)
+class Rebel : IBuyer
+{
+    public string Name { get; }
+    public int Age { get; }
+    public string Group { get; }
+    public int Food { get; private set; }
+
+    public Rebel(string name, int age, string group)
+    {
+        Name = name;
+        Age = age;
+        Group = group;
+        Food = 0;
+    }
+
+    public void BuyFood()
+    {
+        Food += 5;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Dictionary<string, IBuyer> buyers = new Dictionary<string, IBuyer>();
+        int n = int.Parse(Console.ReadLine());
+        
+        for (int i = 0; i < n; i++)
+        {
+            string[] parts = Console.ReadLine().Split(' ');
+
+            if (parts.Length == 4)
             {
-                string[] parts = Console.ReadLine().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length == 0) continue;
-                
-                if (parts.Length == 4)
-                {
-                    string name = parts[0];
-                    int age = int.Parse(parts[1]);
-                    string id = parts[2];
-                    string birthdate = parts[3];
-                    buyers[name] = new Citizen(name, age, id, birthdate);
-                }
-                else if (parts.Length == 3)
-                {
-                    string name = parts[0];
-                    int age = int.Parse(parts[1]);
-                    string group = parts[2];
-                    buyers[name] = new Rebel(name, age, group);
-                }
-            }
+                string name = parts[0];
+                int age = int.Parse(parts[1]);
+                string id = parts[2];
+                string birthDate = parts[3];
 
-            string input;
-            while ((input = Console.ReadLine()) != "End")
+                Citizen citizen = new Citizen(name, age, id, birthDate);
+                buyers[name] = citizen;
+            }
+            else if (parts.Length == 3)
             {
-                if (buyers.ContainsKey(input))
-                {
-                    buyers[input].BuyFood();
-                }
-            }
+                string name = parts[0];
+                int age = int.Parse(parts[1]);
+                string group = parts[2];
 
-            int totalFood = buyers.Values.Sum(b => b.Food);
-            Console.WriteLine(totalFood);
+                Rebel rebel = new Rebel(name, age, group);
+                buyers[name] = rebel;
+            }
         }
+        
+        string input;
+        while ((input = Console.ReadLine()) != "End")
+        {
+            if (buyers.ContainsKey(input))
+            {
+                buyers[input].BuyFood();
+            }
+        }
+        
+        int totalFood = 0;
+        foreach (var buyer in buyers.Values)
+        {
+            totalFood += buyer.Food;
+        }
+        
+        Console.WriteLine(totalFood);
     }
 }

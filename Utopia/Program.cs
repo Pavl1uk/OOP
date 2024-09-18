@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Utopia
 {
@@ -8,31 +7,25 @@ namespace Utopia
     {
         static void Main()
         {
-            List<string> detainedIds = new List<string>();
-            string input;
+            List<string> ids = new List<string>();
+            string input = Console.ReadLine();
 
-            while (!string.IsNullOrEmpty(input = Console.ReadLine()))
+            while (input != "End")
             {
-                if (input == "End")
-                {
-                    break;
-                }
-                
-                string[] parts = input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length == 0) continue;
-
+                string[] parts = input.Split(' ');
                 string id = parts[parts.Length - 1];
-                detainedIds.Add(id);
+                ids.Add(id);
+                input = Console.ReadLine();
             }
 
             string fakeIdEnd = Console.ReadLine();
-            if (string.IsNullOrEmpty(fakeIdEnd)) return;
-            
-            var result = detainedIds.Where(id => id.EndsWith(fakeIdEnd)).ToList();
-            
-            foreach (var id in result)
+
+            foreach (string id in ids)
             {
-                Console.WriteLine(id);
+                if (id.EndsWith(fakeIdEnd))
+                {
+                    Console.WriteLine(id);
+                }
             }
         }
     }
